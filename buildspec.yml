@@ -13,10 +13,7 @@ phases:
       - npm install -g yarn
       - echo Installing dependencies...
       - bundle install
-      - echo Installing and setting up webpack with yarn
-      - bundle exec rake webpacker:install
-      - echo Installing all Javascript dependencies as specified via Yarn
-      - bundle exec rake webpacker:yarn_install
+      - yarn
 
   build:
     commands:
