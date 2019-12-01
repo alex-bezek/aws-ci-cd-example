@@ -10,7 +10,7 @@ resource "aws_codebuild_project" "build" {
 
   environment {
     compute_type = "BUILD_GENERAL1_SMALL"
-    image = "aws/codebuild/standard:3.0"
+    image = "ruby:2.6.5"
     type = "LINUX_CONTAINER"
 
     environment_variable {
