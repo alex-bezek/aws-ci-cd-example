@@ -65,6 +65,12 @@ resource "aws_elastic_beanstalk_environment" "prod" {
     name = "RAILS_SKIP_MIGRATIONS"
     value = "true"
   }
+
+  setting {
+    namespace = "aws:elasticbeanstalk:application:environment"
+    name = "RAILS_MASTER_KEY"
+    value = var.rails_master_key
+  }
 }
 
 output "url" {
