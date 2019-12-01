@@ -1,0 +1,51 @@
+version: 0.2
+
+phases:
+  pre_build:
+    commands:
+      - echo Installing dependencies...
+      - bundle install
+      - npm install
+  build:
+    commands:
+      - echo Building files
+      - bundle exec rails webpacker:compile
+      - rm -rf node_modules
+artifacts:
+  files:
+    - '**/*'
+  base-directory: '.'
+  discard-paths: no
+
+
+
+
+# phases:
+#   install:
+#     commands:
+#       - echo get the latest bundler
+#       - gem install bundler
+#       - echo Installing Ruby dependencies
+#       - bundle install --deployment
+#   pre_build:
+#     commands:
+#       - echo Installing and setting up webpack with yarn
+#       - bundle exec rake webpacker:install
+#       - echo Verifying if Node.js is installed
+#       - bundle exec rake webpacker:check_node
+#       - echo Verifying if yarn is installed
+#       - bundle exec rake webpacker:check_yarn
+#       - echo Installing all Javascript dependencies as specified via Yarn
+#       - bundle exec rake webpacker:yarn_install
+#   build:
+#     commands:
+#       - echo Build started on `date`
+#       - echo Testing
+#       - yarn test
+#       - echo Checking if Webpack compiles
+#       - bundle exec rake webpacker:compile
+#   post_build:
+#     commands:
+#       - echo Build completed on `date`
+# artifacts:
+#   files:
