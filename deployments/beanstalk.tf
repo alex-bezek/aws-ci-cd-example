@@ -1,27 +1,6 @@
-# create a zip of your deployment with terraform
-data "archive_file" "artifact_zip" {
-  type        = "zip"
-  source_dir = "../"
-  output_path = "../tmp/artifact.zip"
-}
-
-resource "aws_s3_bucket_object" "artifact" {
-  key    = "application-${uuid()}"
-  bucket = aws_s3_bucket.artifacts.id
-  source = data.archive_file.artifact_zip.output_path
-}
-
-resource "aws_elastic_beanstalk_application_version" "version" {
-  name        = "aws-rails-example-${uuid()}"
-  application = aws_elastic_beanstalk_application.app.name
-  description = "application version created by terraform"
-  bucket      = aws_s3_bucket.artifacts.id
-  key         = aws_s3_bucket_object.artifact.id
-}
-
 resource "aws_s3_bucket" "artifacts" {
   bucket = "aws-rails-example-artifacts"
-  acl = "private"
+  acl    = "private"
 }
 
 resource "aws_elastic_beanstalk_application" "app" {
@@ -31,7 +10,7 @@ resource "aws_elastic_beanstalk_application" "app" {
   # appversion_lifecycle {
   #   service_role          = aws_iam_role.beanstalk_service.arn
   #   max_count             = 128
-  #   max_age_in_days = 30
+  #   max_age_in_days       = 30
   #   delete_source_from_s3 = true
   # }
 }
@@ -50,26 +29,26 @@ resource "aws_elastic_beanstalk_environment" "prod" {
 
   setting {
     namespace = "aws:autoscaling:launchconfiguration"
-    name = "IamInstanceProfile"
-    value = aws_iam_instance_profile.build.name
+    name      = "IamInstanceProfile"
+    value     = aws_iam_instance_profile.build.name
   }
 
   setting {
     namespace = "aws:elasticbeanstalk:application:environment"
-    name = "RAILS_SKIP_ASSET_COMPILATION"
-    value = "true"
+    name      = "RAILS_SKIP_ASSET_COMPILATION"
+    value     = "true"
   }
 
   setting {
     namespace = "aws:elasticbeanstalk:application:environment"
-    name = "RAILS_SKIP_MIGRATIONS"
-    value = "true"
+    name      = "RAILS_SKIP_MIGRATIONS"
+    value     = "true"
   }
 
   setting {
     namespace = "aws:elasticbeanstalk:application:environment"
-    name = "RAILS_MASTER_KEY"
-    value = var.rails_master_key
+    name      = "RAILS_MASTER_KEY"
+    value     = var.rails_master_key
   }
 }
 
@@ -82,5 +61,3 @@ output "env_name" {
 output "app_version" {
   value = "${aws_elastic_beanstalk_application_version.version.name}"
 }
-
-# aws --region us-west-2 elasticbeanstalk update-environment --environment-name $(terraform output env_name) --version-label $(terraform output app_version)

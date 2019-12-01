@@ -240,7 +240,7 @@ resource "aws_iam_instance_profile" "build" {
 
 resource "aws_s3_bucket_policy" "artifacts" {
   bucket = aws_s3_bucket.artifacts.id
-  policy =<<POLICY
+  policy = <<POLICY
 {
   "Version": "2012-10-17",
   "Id": "aws-rails-example-artifacts-policy",

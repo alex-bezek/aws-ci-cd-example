@@ -1,8 +1,8 @@
 resource "aws_codebuild_project" "build" {
-  name = "aws-rails-example-project"
-  description = "Builds the client files for the aws-rails-example environment."
+  name          = "aws-rails-example-project"
+  description   = "Builds the client files for the aws-rails-example environment."
   build_timeout = "5"
-  service_role = aws_iam_role.build.arn
+  service_role  = aws_iam_role.build.arn
 
   artifacts {
     type = "CODEPIPELINE"
@@ -10,8 +10,8 @@ resource "aws_codebuild_project" "build" {
 
   environment {
     compute_type = "BUILD_GENERAL1_SMALL"
-    image = "ruby:2.6.5"
-    type = "LINUX_CONTAINER"
+    image        = "ruby:2.6.5"
+    type         = "LINUX_CONTAINER"
 
     environment_variable {
       name  = "S3_BUCKET"
@@ -20,7 +20,7 @@ resource "aws_codebuild_project" "build" {
   }
 
   source {
-    type = "CODEPIPELINE"
+    type      = "CODEPIPELINE"
     buildspec = "buildspec.yml"
   }
 }
@@ -58,13 +58,13 @@ resource "aws_codepipeline" "pipeline" {
     name = "Build"
 
     action {
-      name = "Build"
-      category = "Build"
-      owner = "AWS"
-      provider = "CodeBuild"
-      input_artifacts = ["source"]
+      name             = "Build"
+      category         = "Build"
+      owner            = "AWS"
+      provider         = "CodeBuild"
+      input_artifacts  = ["source"]
       output_artifacts = ["artifact"]
-      version = "1"
+      version          = "1"
 
       configuration = {
         ProjectName = aws_codebuild_project.build.name
@@ -76,12 +76,12 @@ resource "aws_codepipeline" "pipeline" {
     name = "Deploy"
 
     action {
-      name = "Deploy"
-      category = "Deploy"
-      owner = "AWS"
-      provider = "ElasticBeanstalk"
+      name            = "Deploy"
+      category        = "Deploy"
+      owner           = "AWS"
+      provider        = "ElasticBeanstalk"
       input_artifacts = ["artifact"]
-      version = "1"
+      version         = "1"
 
       configuration = {
         ApplicationName = aws_elastic_beanstalk_application.app.name

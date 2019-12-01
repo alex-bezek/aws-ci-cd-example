@@ -1,19 +1,9 @@
 locals {
-  state_bucket_name = "aws-rails-example-terraform-state"
-  state_dynamo_name = "aws-rails-example-terraform-state"
+  state_bucket_name   = "aws-rails-example-terraform-state"
+  state_dynamo_name   = "aws-rails-example-terraform-state"
   github_organization = "alex-bezek"
-  github_repository = "aws-ci-cd-example"
-  github_branch = "ci-cd-setup"
-}
-
-variable "github_oauth_token" {
-  type        = string
-  description = "Github oauth access token for code build to use"
-}
-
-variable "rails_master_key" {
-  type        = string
-  description = "The rails master credentials key for decoding secrets"
+  github_repository   = "aws-ci-cd-example"
+  github_branch       = "ci-cd-setup"
 }
 
 provider "aws" {
