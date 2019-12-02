@@ -1,16 +1,20 @@
+# The codebuild stage is used for creating an artifact that is pushed to s3
+# that will be used as the application version for elastic beanstalk
 resource "aws_codebuild_project" "build" {
-  name          = "aws-rails-example-project"
-  description   = "Builds the client files for the aws-rails-example environment."
-  build_timeout = "5"
+  name          = "${local.aws-rails-example}"
+  description   = "Builds the client files for the ${local.aws-rails-example} environment."
+  build_timeout = "15"
   service_role  = aws_iam_role.build.arn
 
   artifacts {
     type = "CODEPIPELINE"
   }
 
+  # Utilize a public dockerhub ruby image. The default linux container type with the ruby
+  # runtime didn't have the correct ruby version installed.
   environment {
     compute_type = "BUILD_GENERAL1_SMALL"
-    image        = "ruby:2.6.5"
+    image        = "ruby:${ruby_version}"
     type         = "LINUX_CONTAINER"
 
     environment_variable {
@@ -25,8 +29,11 @@ resource "aws_codebuild_project" "build" {
   }
 }
 
+# The codepipeline creates a continuous delivery pipeline to build and deploy changes
+# checked into a single branch. It seems it doestn't have the capability to watch multiple
+# branches in order to do branch deploys
 resource "aws_codepipeline" "pipeline" {
-  name     = "aws-rails-example-pipeline"
+  name     = "${local.aws-rails-example}-pipeline"
   role_arn = aws_iam_role.build.arn
 
   artifact_store {
@@ -37,6 +44,9 @@ resource "aws_codepipeline" "pipeline" {
   stage {
     name = "Source"
 
+    # TODO: I'm still not clear how this is getting the changes. My guess is by default its using polling
+    # using the oauth token. There is a terraform resource for a github webhook, but none of the examples
+    # online seem to use it.
     action {
       name             = "Source"
       category         = "Source"
@@ -45,6 +55,7 @@ resource "aws_codepipeline" "pipeline" {
       version          = "1"
       output_artifacts = ["source"]
 
+      # The github oauth token is a variable because it needs to be passed in as a secret
       configuration = {
         OAuthToken = var.github_oauth_token
         Owner      = local.github_organization

@@ -1,9 +1,12 @@
 locals {
+  project_name        = "aws-rails-example"
   state_bucket_name   = "aws-rails-example-terraform-state"
   state_dynamo_name   = "aws-rails-example-terraform-state"
   github_organization = "alex-bezek"
   github_repository   = "aws-ci-cd-example"
   github_branch       = "ci-cd-setup"
+  ruby_version        = "2.6.5"
+  domain_name = "alexbezek.me"
 }
 
 provider "aws" {
