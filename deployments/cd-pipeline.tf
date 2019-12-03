@@ -35,8 +35,8 @@ resource "aws_codebuild_project" "build" {
 resource "aws_codepipeline" "pipeline" {
   # Don't build the code pipeline until the beanstalk application is running so the public succeeds
   depends_on = [aws_elastic_beanstalk_application.app]
-  name     = "${local.project_name}-pipeline"
-  role_arn = aws_iam_role.build.arn
+  name       = "${local.project_name}-pipeline"
+  role_arn   = aws_iam_role.build.arn
 
   artifact_store {
     location = aws_s3_bucket.artifacts.bucket

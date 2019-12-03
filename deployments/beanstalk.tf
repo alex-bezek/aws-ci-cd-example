@@ -6,8 +6,8 @@ locals {
 
 # The aws bucket to store zip artifacts created by our code build for deployment to beanstalk
 resource "aws_s3_bucket" "artifacts" {
-  bucket = "${local.project_name}-artifacts"
-  acl    = "private"
+  bucket        = "${local.project_name}-artifacts"
+  acl           = "private"
   force_destroy = true
 }
 
@@ -15,7 +15,7 @@ resource "aws_elastic_beanstalk_application" "app" {
   # Prevent the application and environment from being created until the certificate
   # validation record is done so that the actual cert is available for use
   # TODO: Test removing this
-  depends_on = [aws_acm_certificate_validation.cert]
+  depends_on  = [aws_acm_certificate_validation.cert]
   name        = local.project_name
   description = local.project_name
 
@@ -40,7 +40,7 @@ resource "aws_elastic_beanstalk_configuration_template" "template" {
 resource "aws_elastic_beanstalk_environment" "prod" {
   # Prevent the application and environment from being created until the certificate
   # validation record is done so that the actual cert is available for use
-  depends_on = [aws_acm_certificate_validation.cert]
+  depends_on          = [aws_acm_certificate_validation.cert]
   name                = local.project_name
   application         = aws_elastic_beanstalk_application.app.name
   solution_stack_name = local.solution_stack_name

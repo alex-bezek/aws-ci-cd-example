@@ -15,13 +15,13 @@ resource "aws_route53_record" "primary" {
   # This was throwing this error when created. This might resolve it
   # expected length of alias.0.name to be in the range (1 - 1024), got
   depends_on = [aws_elastic_beanstalk_application.app]
-  zone_id = aws_route53_zone.primary.zone_id
-  name    = local.domain_name
-  type    = "A"
+  zone_id    = aws_route53_zone.primary.zone_id
+  name       = local.domain_name
+  type       = "A"
 
   alias {
     # name                   = lower(aws_elastic_beanstalk_environment.prod.cname)
-    name                   = aws_elastic_beanstalk_environment.prod.cname
+    name = aws_elastic_beanstalk_environment.prod.cname
     # name                   = lower(aws_elastic_beanstalk_environment.prod.*.cname[0])
     # name                   = "test"
     zone_id                = data.aws_elastic_beanstalk_hosted_zone.current.id
