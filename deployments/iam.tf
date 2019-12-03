@@ -1,5 +1,5 @@
 resource "aws_iam_role" "build" {
-  name = "aws-rails-example-role"
+  name = "${local.project_name}-role"
 
   assume_role_policy = <<EOF
 {
@@ -39,7 +39,7 @@ EOF
 }
 
 resource "aws_iam_role_policy" "beanstalk_policy" {
-  name = "aws-rails-example-beanstalk-policy"
+  name = "${local.project_name}-beanstalk-policy"
   role = aws_iam_role.build.id
 
   policy = <<POLICY
@@ -234,7 +234,7 @@ POLICY
 }
 
 resource "aws_iam_instance_profile" "build" {
-  name = "aws-rails-example-build-profile"
+  name = "${local.project_name}-build-profile"
   role = aws_iam_role.build.name
 }
 
@@ -243,10 +243,10 @@ resource "aws_s3_bucket_policy" "artifacts" {
   policy = <<POLICY
 {
   "Version": "2012-10-17",
-  "Id": "aws-rails-example-artifacts-policy",
+  "Id": "${local.project_name}-artifacts-policy",
   "Statement": [
     {
-      "Sid": "aws-rails-example-access",
+      "Sid": "${local.project_name}-access",
       "Effect": "Allow",
       "Principal": {
         "AWS": "${aws_iam_role.build.arn}"
@@ -255,7 +255,7 @@ resource "aws_s3_bucket_policy" "artifacts" {
       "Resource": ["${aws_s3_bucket.artifacts.arn}"]
     },
     {
-      "Sid": "aws-rails-example-child-access",
+      "Sid": "${local.project_name}-child-access",
       "Effect": "Allow",
       "Principal": {
         "AWS": "${aws_iam_role.build.arn}"

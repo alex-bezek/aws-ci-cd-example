@@ -1,8 +1,8 @@
 # The codebuild stage is used for creating an artifact that is pushed to s3
 # that will be used as the application version for elastic beanstalk
 resource "aws_codebuild_project" "build" {
-  name          = "${local.aws-rails-example}"
-  description   = "Builds the client files for the ${local.aws-rails-example} environment."
+  name          = local.project_name
+  description   = "Builds the client files for the ${local.project_name} environment."
   build_timeout = "15"
   service_role  = aws_iam_role.build.arn
 
@@ -14,7 +14,7 @@ resource "aws_codebuild_project" "build" {
   # runtime didn't have the correct ruby version installed.
   environment {
     compute_type = "BUILD_GENERAL1_SMALL"
-    image        = "ruby:${ruby_version}"
+    image        = "ruby:${local.ruby_version}"
     type         = "LINUX_CONTAINER"
 
     environment_variable {
@@ -33,7 +33,9 @@ resource "aws_codebuild_project" "build" {
 # checked into a single branch. It seems it doestn't have the capability to watch multiple
 # branches in order to do branch deploys
 resource "aws_codepipeline" "pipeline" {
-  name     = "${local.aws-rails-example}-pipeline"
+  # Don't build the code pipeline until the beanstalk application is running so the public succeeds
+  depends_on = [aws_elastic_beanstalk_application.app]
+  name     = "${local.project_name}-pipeline"
   role_arn = aws_iam_role.build.arn
 
   artifact_store {

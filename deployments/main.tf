@@ -6,7 +6,7 @@ locals {
   github_repository   = "aws-ci-cd-example"
   github_branch       = "ci-cd-setup"
   ruby_version        = "2.6.5"
-  domain_name = "alexbezek.me"
+  domain_name         = "alexbezek.me"
 }
 
 provider "aws" {

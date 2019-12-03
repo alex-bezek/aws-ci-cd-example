@@ -8,11 +8,16 @@ locals {
 resource "aws_s3_bucket" "artifacts" {
   bucket = "${local.project_name}-artifacts"
   acl    = "private"
+  force_destroy = true
 }
 
 resource "aws_elastic_beanstalk_application" "app" {
-  name        = "${local.project_name}"
-  description = "${local.project_name}"
+  # Prevent the application and environment from being created until the certificate
+  # validation record is done so that the actual cert is available for use
+  # TODO: Test removing this
+  depends_on = [aws_acm_certificate_validation.cert]
+  name        = local.project_name
+  description = local.project_name
 
   # appversion_lifecycle {
   #   service_role          = aws_iam_role.beanstalk_service.arn # TODO: Determine what iam roles this needs
@@ -33,7 +38,10 @@ resource "aws_elastic_beanstalk_configuration_template" "template" {
 # Our production/primary hosted deployment. Currently the only deployed
 # instance, but in the future, there would be multiple environmnemnts for promting changes
 resource "aws_elastic_beanstalk_environment" "prod" {
-  name                = "${local.project_name}"
+  # Prevent the application and environment from being created until the certificate
+  # validation record is done so that the actual cert is available for use
+  depends_on = [aws_acm_certificate_validation.cert]
+  name                = local.project_name
   application         = aws_elastic_beanstalk_application.app.name
   solution_stack_name = local.solution_stack_name
 
