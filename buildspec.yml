@@ -1,0 +1,27 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      ruby: 2.6
+  pre_build:
+    commands:
+      - echo Installing node system packages...
+      - apt-get update
+      - apt-get install -y nodejs
+      - apt-get install -y npm
+      - npm install -g yarn
+      - echo Installing dependencies...
+      - bundle install
+      - yarn
+
+  build:
+    commands:
+      - echo Building assets
+      - bundle exec rails webpacker:compile
+      - rm -rf node_modules
+artifacts:
+  files:
+    - '**/*'
+  base-directory: '.'
+  discard-paths: no
